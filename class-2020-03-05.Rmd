@@ -10,18 +10,35 @@ knitr::opts_chunk$set(echo = TRUE)
 library(googlesheets4)
 library(janitor)
 library(tidyverse)
+library(ggplot2)
 
 sheets_deauth()
 
 url <- '14HmwN2cEVAJHupuehCuLdwG9BXtR3COrxDgaaylLhkA'
 
 x <- read_sheet(ss = url) %>% 
-  clean_names()
-
+  clean_names() %>% 
+  mutate(perc_red = red/(red+white)) %>% 
+  arrange(desc(perc_red)) 
 ```
 
-```{r}
-ggplot(x, aes(red), bins = 25) + geom_histogram()
-
+```{r, echo = FALSE}
+ggplot(x, aes(perc_red)) + 
+  geom_histogram() 
 ```
+
+```{r, echo = FALSE}
+# setting proportion to 20%
+
+urn <- tibble(
+  bean_ID = 1:10000,
+  color = c(rep('Red', 2000), rep('White', 8000))
+)
+
+# tibble of all the beads
+# sample without replacement 
+# calculate the proportion for each row using a maps
+# take the mean of the proportion columns
+```
+
 
