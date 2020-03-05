@@ -11,8 +11,9 @@ library(googlesheets4)
 library(janitor)
 library(tidyverse)
 library(ggplot2)
-
+library(dplyr)
 sheets_deauth()
+library(infer)
 
 url <- '14HmwN2cEVAJHupuehCuLdwG9BXtR3COrxDgaaylLhkA'
 
@@ -35,6 +36,46 @@ urn <- tibble(
   color = c(rep('Red', 2000), rep('White', 8000))
 )
 
+# sampleurn <- urn %>% 
+#   rep_sample_n(size = 25, reps = 51)
+# 
+#   
+# virtual_prop_red <-  sampleurn %>% 
+#   group_by(replicate) %>% 
+#   summarize(num_red = sum(color == "Red")) %>% 
+#   mutate(prop_red = num_red / 25)
+#   
+# ggplot(virtual_prop_red, aes(x = prop_red)) +
+#   geom_histogram(binwidth = 0.05, boundary = 0.4, color = "white") + 
+#   labs(x = "Proportion of 25 balls that were red",
+#        title = "Distribution of 51 proportions red")
+
+
+# FUNCTION
+
+sampleurn <- function(x, size, reps) {
+  x %>% 
+  rep_sample_n(size = size, reps = reps)
+}
+
+prop_red <- function(x, size, reps){
+sampleurn(x = x, size = size, reps = reps) %>% 
+  group_by(replicate) %>% 
+  summarize(num_red = sum(color == "Red")) %>% 
+  mutate(prop_red = num_red / size)
+} 
+
+Jamlsucks <- prop_red(x = urn, size= 25, reps = 1000)
+
+View(Jamlsucks)
+
+# ggplot(virtual_prop_red, aes(prop_red)) +
+#   geom_histogram(binwidth = 0.05, boundary = 0.4, color = "white") + 
+#   labs(x = "Proportion of x balls that were red",
+#        title = "Distribution of y proportions red")
+
+ 
+# test(25, 1000)
 # tibble of all the beads
 # sample without replacement 
 # calculate the proportion for each row using a maps
